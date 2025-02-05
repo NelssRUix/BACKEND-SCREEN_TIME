@@ -1,34 +1,36 @@
-LABEL authors="Nelson Ruiz M."
+# Etapa 1: Compilación
 
-# Etapa 1: Construcción
+# Usa la imagen base de Eclipse Temurin con JDK
 FROM eclipse-temurin:21-jdk AS build
 
-WORKDIR /app
+WORKDIR /root
 
-# Copiar archivos de Maven y el POM
-COPY pom.xml ./
+# Copiar archivos de configuración de Maven y el archivo pom.xml
+COPY ./pom.xml ./
 COPY .mvn/ .mvn
 COPY mvnw ./
 
-# Dar permisos al script de Maven Wrapper
+# Otorgar permisos de ejecución al script mvnw
 RUN chmod +x mvnw
 
 # Descargar dependencias necesarias
 RUN ./mvnw dependency:go-offline
 
 # Copiar el código fuente y construir la aplicación
-COPY src ./src
+COPY ./src ./src
 RUN ./mvnw clean package -DskipTests
 
 # Etapa 2: Imagen final
 FROM eclipse-temurin:21-jdk
-WORKDIR /app
+WORKDIR /root
 
-# Copiar el JAR desde la etapa de construcción
-COPY --from=build /app/target/screen_time-0.0.1-SNAPSHOT.jar app.jar
+# Copiar el JAR generado desde la etapa de construcción
+COPY --from=build /root/target/screen_time-0.0.1-SNAPSHOT.jar /root/target/screen_time-0.0.1-SNAPSHOT.jar
 
-# Exponer el puerto de la aplicación
+
+# Define el puerto que expondrá la aplicación
 EXPOSE 8080
 
-# Comando de inicio
-ENTRYPOINT ["java","-jar","app.jar"]
+
+# Define el comando que se ejecutará cuando inicie el contenedor
+ENTRYPOINT ["java","-jar","/root/target/screen_time-0.0.1-SNAPSHOT.jar"]
