@@ -15,11 +15,12 @@ import org.springframework.stereotype.Service;
 public class CustomOAuth2UserService implements OAuth2UserServiceCustom {
 
     private final UserRepository userRepository;
+    private final DefaultOAuth2UserService defaultOAuth2UserService = new DefaultOAuth2UserService();
 
     @Override
     public OAuth2User processOAuthUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
-        OAuth2User oAuth2User = new DefaultOAuth2UserService().loadUser(userRequest);
+        OAuth2User oAuth2User = defaultOAuth2UserService.loadUser(userRequest);
         String email = oAuth2User.getAttribute("email");
         String name = oAuth2User.getAttribute("name");
         String picture = oAuth2User.getAttribute("picture");

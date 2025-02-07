@@ -2,6 +2,7 @@ package com.nelson_ruiz.screen_time.security.oauth2.config;
 
 
 import com.nelson_ruiz.screen_time.security.oauth2.service.interfaces.OAuth2UserServiceCustom;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -13,10 +14,12 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
+    private  final  OAuth2UserServiceCustom oAuth2UserServiceCustom;
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, OAuth2UserServiceCustom oAuth2UserServiceCustom) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
         return httpSecurity
                 .cors(withDefaults())
