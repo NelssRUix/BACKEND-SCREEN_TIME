@@ -47,8 +47,7 @@ public class SecurityConfig {
                             response.setContentType("application/json");
                             response.getWriter().write(String.format("{\"token\":\"%s\", \"refreshToken\":\"%s\"}", token, refreshToken));
 
-                            String redirectUrl = "screen-time://oauth-callback?token=" + token + "&refreshToken=" + refreshToken;
-                            response.sendRedirect(redirectUrl);
+
                         }))
                 );
         return http.build();
