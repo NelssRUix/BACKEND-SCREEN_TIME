@@ -1,12 +1,12 @@
 package com.nelson_ruiz.screen_time.security.controller;
 
 import com.nelson_ruiz.screen_time.security.jwt.JwtTokenProvider;
+import com.nelson_ruiz.screen_time.security.oauth2.service.AuthService;
 import com.nelson_ruiz.screen_time.user.persistence.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.user.OAuth2User;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -17,7 +17,22 @@ import java.util.Map;
 public class AuthController {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final AuthService authService;
     private final UserRepository userRepository;
+
+    //endpoint que reciba el idToken, lo valide con Google y genere un JWT.
+    @PostMapping("/google")
+    public ResponseEntity<?> authenticateWithGoogle(@RequestBody Map<String, String> request) {
+        String idToken = request.get("idToken");
+
+        try {
+            Map<String, String> tokens = authService.authenticateWithGoogle(idToken);
+            return ResponseEntity.ok(tokens);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Google token");
+        }
+    }
+
 
     @PostMapping("/refresh")
     public ResponseEntity<Map<String, String>> refreshToken(@RequestBody Map<String, String> request) {
